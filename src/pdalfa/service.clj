@@ -3,6 +3,7 @@
             [io.pedestal.http.route :as route]
             [io.pedestal.http.body-params :as body-params]
             [io.pedestal.http.route.definition :refer [defroutes]]
+            [pdalfa.pages :as page]
             [ring.util.response :as ring-resp]))
 
 (defn about-page
@@ -13,15 +14,19 @@
 
 (defn home-page
   [request]
-  (ring-resp/response "Hello World!"))
+  (-> (page/home request)
+      ring-resp/response
+      (ring-resp/content-type "text/html")))
+
+(defn push-up
+  [request]
+  (-> (page/home request)
+      ring-resp/response
+      (ring-resp/content-type "text/html")))
 
 (defroutes routes
-  ;; Defines "/" and "/about" routes with their associated :get handlers.
-  ;; The interceptors defined after the verb map (e.g., {:get home-page}
-  ;; apply to / and its children (/about).
-  [[["/" {:get home-page}
-     ^:interceptors [(body-params/body-params) bootstrap/html-body]
-     ["/about" {:get about-page}]]]])
+  [[["/" {:get home-page}]
+    ["/nama/:kalian" {:get push-up}]]])
 
 ;; Consumed by pdalfa.server/create-server
 ;; See bootstrap/default-interceptors for additional options you can configure
